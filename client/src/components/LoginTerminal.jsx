@@ -100,7 +100,6 @@ export default function LoginTerminal() {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="usuario..."
                   className="w-full bg-[#05080f] border border-term-border rounded p-2.5 text-term-text focus:outline-none focus:border-term-green/80 font-mono text-sm"
-                  autoFocus
                 />
               </div>
 

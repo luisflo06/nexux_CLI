@@ -12,8 +12,10 @@ const __dirname = path.dirname(__filename);
 
 const { Pool } = pg;
 
-export let isRealPostgres = false;
-export let dbStatusMessage = 'INITIALIZING';
+export const dbState = {
+  isRealPostgres: false,
+  dbStatusMessage: 'INITIALIZING'
+};
 
 // In-Memory store fallback
 class InMemoryRelationalDb {
@@ -32,7 +34,7 @@ class InMemoryRelationalDb {
   // Helper to resolve breadcrumb path from any node up to root
   getBreadcrumbs(nodeId) {
     const crumbs = [];
-    let currentId = parseInt(nodeId, 10);
+    let currentId = Number.parseInt(nodeId, 10);
     const visited = new Set();
 
     while (currentId && !visited.has(currentId)) {
@@ -92,7 +94,7 @@ class InMemoryRelationalDb {
 export const memoryDb = new InMemoryRelationalDb();
 
 // Attempt connection to real Postgres
-const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/nexus_cli_pm';
+const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/nexus_cli_pm';
 
 export const realPool = new Pool({
   connectionString: connectionString,
@@ -101,13 +103,13 @@ export const realPool = new Pool({
 });
 
 // Test connection on boot
-(async () => {
+void (async () => {
   try {
     const client = await realPool.connect();
     const res = await client.query('SELECT NOW()');
     client.release();
-    isRealPostgres = true;
-    dbStatusMessage = `POSTGRESQL_LIVE [${res.rows[0].now.toISOString()}]`;
+    dbState.isRealPostgres = true;
+    dbState.dbStatusMessage = `POSTGRESQL_LIVE [${res.rows[0].now.toISOString()}]`;
     console.log('\x1b[32m[DB: OK] Connected to live PostgreSQL database.\x1b[0m');
 
     // Run schema migrations
@@ -118,8 +120,8 @@ export const realPool = new Pool({
       console.log('\x1b[32m[DB: OK] PostgreSQL schema verified/applied.\x1b[0m');
     }
   } catch (err) {
-    isRealPostgres = false;
-    dbStatusMessage = 'PG_MEMORY_ADAPTER (Live Server Fallback)';
+    dbState.isRealPostgres = false;
+    dbState.dbStatusMessage = 'PG_MEMORY_ADAPTER (Live Server Fallback)';
     console.log('\x1b[33m[DB: NOTICE] Live PostgreSQL instance not detected on 5432. Active fallback: PG-Compatible In-Memory Engine.\x1b[0m');
     console.log('\x1b[36m[DB: TIP] All CRUD, breadcrumbs, tree traversal, auth & audit logging operate seamlessly.\x1b[0m');
   }
@@ -131,7 +133,7 @@ export const realPool = new Pool({
  * Otherwise, routes to memory adapter with zero disruption.
  */
 export async function query(text, params = []) {
-  if (isRealPostgres) {
+  if (dbState.isRealPostgres) {
     try {
       return await realPool.query(text, params);
     } catch (pgError) {
@@ -152,7 +154,7 @@ export async function query(text, params = []) {
       return { rows: user ? [user] : [], rowCount: user ? 1 : 0 };
     }
     if (lower.includes('where id =')) {
-      const id = parseInt(params[0], 10);
+      const id = Number.parseInt(params[0], 10);
       const user = memoryDb.users.find(u => u.id === id);
       return { rows: user ? [user] : [], rowCount: user ? 1 : 0 };
     }
@@ -162,7 +164,7 @@ export async function query(text, params = []) {
   // 2. NODES / PROJECTS
   if (lower.startsWith('select') && lower.includes('from nodes')) {
     if (lower.includes('where id =')) {
-      const id = parseInt(params[0], 10);
+      const id = Number.parseInt(params[0], 10);
       const node = memoryDb.nodes.find(n => n.id === id);
       if (!node) return { rows: [], rowCount: 0 };
       const lead = memoryDb.users.find(u => u.id === node.lead_id);
@@ -181,7 +183,7 @@ export async function query(text, params = []) {
       return { rows: node ? [node] : [], rowCount: node ? 1 : 0 };
     }
     if (lower.includes('where parent_id =') || lower.includes('where parent_id is null')) {
-      const parentId = params[0] !== undefined ? (params[0] === null ? null : parseInt(params[0], 10)) : null;
+      const parentId = params[0] !== undefined ? (params[0] === null ? null : Number.parseInt(params[0], 10)) : null;
       const rows = memoryDb.nodes.filter(n => n.parent_id === parentId);
       return { rows, rowCount: rows.length };
     }
@@ -191,7 +193,7 @@ export async function query(text, params = []) {
   // 3. TASKS
   if (lower.startsWith('select') && lower.includes('from tasks')) {
     if (lower.includes('where node_id =')) {
-      const nodeId = parseInt(params[0], 10);
+      const nodeId = Number.parseInt(params[0], 10);
       const rows = memoryDb.tasks
         .filter(t => t.node_id === nodeId)
         .map(t => {
@@ -205,7 +207,7 @@ export async function query(text, params = []) {
       return { rows, rowCount: rows.length };
     }
     if (lower.includes('where id =')) {
-      const id = parseInt(params[0], 10);
+      const id = Number.parseInt(params[0], 10);
       const task = memoryDb.tasks.find(t => t.id === id);
       return { rows: task ? [task] : [], rowCount: task ? 1 : 0 };
     }

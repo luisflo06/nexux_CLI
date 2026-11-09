@@ -1,6 +1,6 @@
 import express from 'express';
 import os from 'os';
-import { memoryDb, isRealPostgres, dbStatusMessage } from '../db/pool.js';
+import { memoryDb, dbState } from '../db/pool.js';
 import { initialNodes, initialTasks, initialAuditLogs } from '../db/seedData.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
@@ -64,8 +64,8 @@ router.get('/metrics', authenticateToken, (req, res) => {
         totalMemoryMb: Math.round(os.totalmem() / 1024 / 1024),
         freeMemoryMb: Math.round(os.freemem() / 1024 / 1024),
         uptimeSeconds,
-        dbStatus: dbStatusMessage,
-        isRealPostgres
+        dbStatus: dbState.dbStatusMessage,
+        isRealPostgres: dbState.isRealPostgres
       },
       operatorsCount: memoryDb.users.length
     });

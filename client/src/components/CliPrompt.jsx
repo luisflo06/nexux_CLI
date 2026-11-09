@@ -89,7 +89,7 @@ export default function CliPrompt({
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      handleExecute();
+      void handleExecute();
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       if (cmdHistoryList.length > 0) {
@@ -220,7 +220,6 @@ export default function CliPrompt({
           onKeyDown={handleKeyDown}
           placeholder="Escriba un comando (ej: ls, cd DOM-INFRA, tree, task add 'Test', help)..."
           className="flex-1 bg-transparent text-term-text font-mono text-xs focus:outline-none placeholder-term-muted/50"
-          autoFocus
         />
 
         <button

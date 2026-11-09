@@ -7,28 +7,6 @@ const api = axios.create({
   }
 });
 
-/**
- * Security Helper: Sanitize route parameters to prevent
- * Client-Side Request Forgery (CSRF/SSRF) and API Path Traversal.
- * Whitelists only safe alphanumeric chars, underscores and hyphens.
- */
-function sanitizeParam(param) {
-  if (typeof param === 'number') {
-    if (!Number.isFinite(param)) {
-      throw new TypeError('Invalid numeric parameter');
-    }
-    return String(param);
-  }
-  if (typeof param === 'string') {
-    const clean = param.trim().replace(/[^a-zA-Z0-9_-]/g, '');
-    if (!clean) {
-      throw new TypeError('Parameter contains invalid characters');
-    }
-    return encodeURIComponent(clean);
-  }
-  throw new TypeError('Parameter must be a number or string');
-}
-
 // Request interceptor: inject token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('nexus_cli_token');
@@ -73,13 +51,13 @@ export const projectService = {
     return res.data;
   },
   getNode: async (id) => {
-    const safeId = sanitizeParam(id);
-    const res = await api.get(`/projects/${safeId}`);
+    const safeId = Number.parseInt(id, 10) || 1;
+    const res = await api.get('/projects/detail', { params: { id: safeId } });
     return res.data;
   },
   getBreadcrumbs: async (id) => {
-    const safeId = sanitizeParam(id);
-    const res = await api.get(`/projects/${safeId}/breadcrumbs`);
+    const safeId = Number.parseInt(id, 10) || 1;
+    const res = await api.get('/projects/breadcrumbs', { params: { id: safeId } });
     return res.data;
   },
   createNode: async (data) => {
@@ -87,13 +65,13 @@ export const projectService = {
     return res.data;
   },
   updateNode: async (id, data) => {
-    const safeId = sanitizeParam(id);
-    const res = await api.put(`/projects/${safeId}`, data);
+    const safeId = Number.parseInt(id, 10);
+    const res = await api.put('/projects/update', data, { params: { id: safeId } });
     return res.data;
   },
   deleteNode: async (id) => {
-    const safeId = sanitizeParam(id);
-    const res = await api.delete(`/projects/${safeId}`);
+    const safeId = Number.parseInt(id, 10);
+    const res = await api.delete('/projects/remove', { params: { id: safeId } });
     return res.data;
   }
 };
@@ -108,13 +86,13 @@ export const taskService = {
     return res.data;
   },
   updateTask: async (id, data) => {
-    const safeId = sanitizeParam(id);
-    const res = await api.put(`/tasks/${safeId}`, data);
+    const safeId = Number.parseInt(id, 10);
+    const res = await api.put('/tasks/update', data, { params: { id: safeId } });
     return res.data;
   },
   deleteTask: async (id) => {
-    const safeId = sanitizeParam(id);
-    const res = await api.delete(`/tasks/${safeId}`);
+    const safeId = Number.parseInt(id, 10);
+    const res = await api.delete('/tasks/remove', { params: { id: safeId } });
     return res.data;
   }
 };
@@ -136,12 +114,10 @@ export const adminService = {
 
 export const cliService = {
   exec: async (command, currentNodeId) => {
-    const safeNodeId = currentNodeId !== undefined && currentNodeId !== null
-      ? sanitizeParam(currentNodeId)
-      : 1;
+    const safeNodeId = Number.parseInt(currentNodeId, 10) || 1;
     const res = await api.post('/cli/exec', {
       command: String(command || ''),
-      currentNodeId: Number(safeNodeId) || 1
+      currentNodeId: safeNodeId
     });
     return res.data;
   }

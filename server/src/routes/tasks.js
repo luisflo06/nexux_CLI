@@ -12,7 +12,7 @@ router.get('/', authenticateToken, (req, res) => {
     let results = [...memoryDb.tasks];
 
     if (node_id) {
-      const nid = parseInt(node_id, 10);
+      const nid = Number.parseInt(node_id, 10);
       results = results.filter(t => t.node_id === nid);
     }
     if (status) {
@@ -22,7 +22,7 @@ router.get('/', authenticateToken, (req, res) => {
       results = results.filter(t => t.priority.toUpperCase() === priority.toUpperCase());
     }
     if (assigned_to) {
-      const uid = parseInt(assigned_to, 10);
+      const uid = Number.parseInt(assigned_to, 10);
       results = results.filter(t => t.assigned_to === uid);
     }
 
@@ -56,7 +56,7 @@ router.post('/', authenticateToken, (req, res) => {
       });
     }
 
-    const nodeIdNum = parseInt(node_id, 10);
+    const nodeIdNum = Number.parseInt(node_id, 10);
     const targetNode = memoryDb.nodes.find(n => n.id === nodeIdNum);
     if (!targetNode) {
       return res.status(404).json({ error: 'NODE_NOT_FOUND', message: 'El nodo especificado no existe.' });
@@ -73,8 +73,8 @@ router.post('/', authenticateToken, (req, res) => {
       description: description || '',
       status: 'TODO',
       priority: priority || 'NORMAL',
-      assigned_to: assigned_to ? parseInt(assigned_to, 10) : req.user.id,
-      estimated_hours: parseFloat(estimated_hours) || 4.0,
+      assigned_to: assigned_to ? Number.parseInt(assigned_to, 10) : req.user.id,
+      estimated_hours: Number.parseFloat(estimated_hours) || 4.0,
       logged_hours: 0,
       tags: Array.isArray(tags) ? tags : (tags ? tags.split(',').map(s => s.trim()) : ['dev']),
       created_at: new Date().toISOString(),
@@ -98,10 +98,11 @@ router.post('/', authenticateToken, (req, res) => {
   }
 });
 
-// PUT /api/tasks/:id - Update task
-router.put('/:id', authenticateToken, (req, res) => {
+// Helper for task update
+function handleUpdateTask(req, res) {
   try {
-    const taskId = parseInt(req.params.id, 10);
+    const rawId = req.query.id || req.body.id || req.params.id;
+    const taskId = Number.parseInt(rawId, 10);
     const taskIndex = memoryDb.tasks.findIndex(t => t.id === taskId);
 
     if (taskIndex === -1) {
@@ -115,9 +116,9 @@ router.put('/:id', authenticateToken, (req, res) => {
     if (description !== undefined) task.description = description;
     if (status !== undefined) task.status = status;
     if (priority !== undefined) task.priority = priority;
-    if (assigned_to !== undefined) task.assigned_to = assigned_to ? parseInt(assigned_to, 10) : null;
-    if (estimated_hours !== undefined) task.estimated_hours = parseFloat(estimated_hours);
-    if (logged_hours !== undefined) task.logged_hours = parseFloat(logged_hours);
+    if (assigned_to !== undefined) task.assigned_to = assigned_to ? Number.parseInt(assigned_to, 10) : null;
+    if (estimated_hours !== undefined) task.estimated_hours = Number.parseFloat(estimated_hours);
+    if (logged_hours !== undefined) task.logged_hours = Number.parseFloat(logged_hours);
     if (tags !== undefined) task.tags = Array.isArray(tags) ? tags : tags.split(',').map(s => s.trim());
 
     task.updated_at = new Date().toISOString();
@@ -135,12 +136,16 @@ router.put('/:id', authenticateToken, (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'UPDATE_TASK_FAILED', message: err.message });
   }
-});
+}
 
-// DELETE /api/tasks/:id
-router.delete('/:id', authenticateToken, (req, res) => {
+router.put('/update', authenticateToken, handleUpdateTask);
+router.put('/:id', authenticateToken, handleUpdateTask);
+
+// Helper for task deletion
+function handleDeleteTask(req, res) {
   try {
-    const taskId = parseInt(req.params.id, 10);
+    const rawId = req.query.id || req.params.id;
+    const taskId = Number.parseInt(rawId, 10);
     const taskIndex = memoryDb.tasks.findIndex(t => t.id === taskId);
 
     if (taskIndex === -1) {
@@ -163,6 +168,9 @@ router.delete('/:id', authenticateToken, (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'DELETE_TASK_FAILED', message: err.message });
   }
-});
+}
+
+router.delete('/remove', authenticateToken, handleDeleteTask);
+router.delete('/:id', authenticateToken, handleDeleteTask);
 
 export default router;

@@ -41,7 +41,7 @@ export default function Breadcrumbs({ breadcrumbs = [], onSelectNode }) {
   const fullPath = '/' + breadcrumbs.map(b => b.code.toLowerCase()).join('/');
 
   const copyPath = () => {
-    navigator.clipboard.writeText(fullPath);
+    void navigator.clipboard.writeText(fullPath);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

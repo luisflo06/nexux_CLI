@@ -56,8 +56,8 @@ export default function TaskModal({ isOpen, onClose, nodeId, onSaved }) {
         title: formData.title,
         description: formData.description,
         priority: formData.priority,
-        assigned_to: formData.assigned_to ? parseInt(formData.assigned_to, 10) : null,
-        estimated_hours: parseFloat(formData.estimated_hours) || 4,
+        assigned_to: formData.assigned_to ? Number.parseInt(formData.assigned_to, 10) : null,
+        estimated_hours: Number.parseFloat(formData.estimated_hours) || 4,
         tags: formData.tags.split(',').map(s => s.trim()).filter(Boolean)
       });
 
@@ -104,7 +104,6 @@ export default function TaskModal({ isOpen, onClose, nodeId, onSaved }) {
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="ej: Validar integridad ACID en replicacion..."
               className="w-full bg-term-bg border border-term-border rounded p-2 text-term-text focus:outline-none focus:border-term-green"
-              autoFocus
               required
             />
           </div>

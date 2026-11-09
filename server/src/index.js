@@ -6,12 +6,15 @@ import projectsRoutes from './routes/projects.js';
 import tasksRoutes from './routes/tasks.js';
 import adminRoutes from './routes/admin.js';
 import cliRoutes from './routes/cli.js';
-import { dbStatusMessage, isRealPostgres } from './db/pool.js';
+import { dbState } from './db/pool.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+// Security: disable X-Powered-By header to prevent technology disclosure
+app.disable('x-powered-by');
 
 // Security: restrict CORS to trusted origins rather than wildcard '*'
 const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -41,8 +44,8 @@ app.get('/api/health', (req, res) => {
     service: 'nexus-pm-cli-backend',
     timestamp: new Date().toISOString(),
     postgres: {
-      connected: isRealPostgres,
-      status: dbStatusMessage
+      connected: dbState.isRealPostgres,
+      status: dbState.dbStatusMessage
     }
   });
 });
@@ -53,7 +56,7 @@ app.listen(PORT, () => {
 ║             NEXUS-CLI PROJECT MANAGEMENT SYSTEM DAEMON                 ║
 ╠════════════════════════════════════════════════════════════════════════╣
 ║  [REST API]   http://localhost:${PORT}/api                               ║
-║  [DB STATUS]  ${dbStatusMessage.padEnd(52, ' ')}║
+║  [DB STATUS]  ${dbState.dbStatusMessage.padEnd(52, ' ')}║
 ║  [CLI SHELL]  Interactive Shell API ready on /api/cli/exec             ║
 ║  [STACK]      Node.js 24 + Express + PostgreSQL + JWT                  ║
 ╚════════════════════════════════════════════════════════════════════════╝\x1b[0m

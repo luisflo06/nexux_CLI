@@ -80,19 +80,19 @@ export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSa
           description: formData.description,
           priority: formData.priority,
           status: formData.status,
-          progress: parseInt(formData.progress, 10),
-          lead_id: formData.lead_id ? parseInt(formData.lead_id, 10) : null,
-          parent_id: formData.parent_id ? parseInt(formData.parent_id, 10) : null
+          progress: Number.parseInt(formData.progress, 10),
+          lead_id: formData.lead_id ? Number.parseInt(formData.lead_id, 10) : null,
+          parent_id: formData.parent_id ? Number.parseInt(formData.parent_id, 10) : null
         });
       } else {
         await projectService.createNode({
           name: formData.name,
           code: formData.code,
           type: formData.type,
-          parent_id: formData.parent_id ? parseInt(formData.parent_id, 10) : null,
+          parent_id: formData.parent_id ? Number.parseInt(formData.parent_id, 10) : null,
           description: formData.description,
           priority: formData.priority,
-          lead_id: formData.lead_id ? parseInt(formData.lead_id, 10) : null
+          lead_id: formData.lead_id ? Number.parseInt(formData.lead_id, 10) : null
         });
       }
 

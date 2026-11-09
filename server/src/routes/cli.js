@@ -1,5 +1,5 @@
 import express from 'express';
-import { memoryDb, isRealPostgres } from '../db/pool.js';
+import { memoryDb, dbState } from '../db/pool.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -43,7 +43,7 @@ router.post('/exec', authenticateToken, (req, res) => {
     const cmd = parts[0].toLowerCase();
     const args = parts.slice(1);
 
-    const activeNodeId = currentNodeId ? parseInt(currentNodeId, 10) : 1;
+    const activeNodeId = currentNodeId ? Number.parseInt(currentNodeId, 10) : 1;
     const currentNode = memoryDb.nodes.find(n => n.id === activeNodeId) || memoryDb.nodes[0];
 
     // Log the CLI execution
@@ -100,7 +100,7 @@ Operador:   \x1b[32m${req.user.username}\x1b[0m
 Nombre:     ${req.user.full_name}
 Nivel:      \x1b[33m${req.user.role.toUpperCase()}\x1b[0m
 Host:       nexus-cli-server:4000
-Motor DB:   ${isRealPostgres ? 'PostgreSQL Native' : 'PostgreSQL-Memory Bridge'}
+Motor DB:   ${dbState.isRealPostgres ? 'PostgreSQL Native' : 'PostgreSQL-Memory Bridge'}
 `
         });
       }
@@ -171,7 +171,7 @@ Motor DB:   ${isRealPostgres ? 'PostgreSQL Native' : 'PostgreSQL-Memory Bridge'}
         const found = memoryDb.nodes.find(n =>
           n.code.toUpperCase() === targetClean ||
           n.slug.toUpperCase() === targetClean ||
-          n.id === parseInt(target, 10)
+          n.id === Number.parseInt(target, 10)
         );
 
         if (found) {
@@ -193,7 +193,7 @@ Motor DB:   ${isRealPostgres ? 'PostgreSQL Native' : 'PostgreSQL-Memory Bridge'}
         }
 
         // Try task first
-        const task = memoryDb.tasks.find(t => t.code.toUpperCase() === targetCode || t.id === parseInt(targetCode, 10));
+        const task = memoryDb.tasks.find(t => t.code.toUpperCase() === targetCode || t.id === Number.parseInt(targetCode, 10));
         if (task) {
           const assignee = memoryDb.users.find(u => u.id === task.assigned_to);
           const node = memoryDb.nodes.find(n => n.id === task.node_id);
@@ -214,7 +214,7 @@ Descripcion:
         }
 
         // Try node
-        const node = memoryDb.nodes.find(n => n.code.toUpperCase() === targetCode || n.id === parseInt(targetCode, 10));
+        const node = memoryDb.nodes.find(n => n.code.toUpperCase() === targetCode || n.id === Number.parseInt(targetCode, 10));
         if (node) {
           const lead = memoryDb.users.find(u => u.id === node.lead_id);
           const crumbs = memoryDb.getBreadcrumbs(node.id);
@@ -242,7 +242,7 @@ Descripcion:
 
         if (sub === 'done' || sub === 'start') {
           const tCode = (args[1] || '').toUpperCase();
-          const task = memoryDb.tasks.find(t => t.code.toUpperCase() === tCode || t.id === parseInt(tCode, 10));
+          const task = memoryDb.tasks.find(t => t.code.toUpperCase() === tCode || t.id === Number.parseInt(tCode, 10));
           if (!task) {
             return res.json({ output: `\x1b[31mError:\x1b[0m Tarea '${tCode}' no encontrada.` });
           }
@@ -370,7 +370,7 @@ Proyectos Activos:      ${projects.length}
 Total Tareas:           ${totalTasks} (${doneTasks} resueltas - ${Math.round((doneTasks/Math.max(totalTasks,1))*100)}% exito)
 Operadores en Sistema:  ${memoryDb.users.length}
 Eventos de Auditoria:   ${memoryDb.auditLogs.length} logs
-Base de Datos:          ${isRealPostgres ? 'PostgreSQL Native Socket (Live)' : 'PostgreSQL Emulated Memory Driver'}
+Base de Datos:          ${dbState.isRealPostgres ? 'PostgreSQL Native Socket (Live)' : 'PostgreSQL Emulated Memory Driver'}
 `
           });
         }

@@ -1,7 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { memoryDb, isRealPostgres, query } from '../db/pool.js';
+import { memoryDb, dbState, query } from '../db/pool.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -21,7 +21,7 @@ router.post('/login', async (req, res) => {
 
     let user = null;
 
-    if (isRealPostgres) {
+    if (dbState.isRealPostgres) {
       const result = await query('SELECT * FROM users WHERE LOWER(username) = LOWER($1)', [username]);
       if (result.rows.length > 0) {
         user = result.rows[0];
@@ -81,7 +81,7 @@ router.post('/login', async (req, res) => {
       },
       system: {
         hostname: 'nexus-pm-core',
-        dbDriver: isRealPostgres ? 'PostgreSQL (Active Native)' : 'PostgreSQL-Memory Adapter (Online)',
+        dbDriver: dbState.isRealPostgres ? 'PostgreSQL (Active Native)' : 'PostgreSQL-Memory Adapter (Online)',
         kernel: 'Node.js/v24.20.0-cli-sys'
       }
     });

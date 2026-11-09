@@ -4,31 +4,11 @@ import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// GET /api/projects/tree - Complete hierarchy tree
-router.get('/tree', authenticateToken, (req, res) => {
+// Helper to handle single node detail query
+function handleGetNodeDetail(req, res) {
   try {
-    const tree = memoryDb.getFullTree(null);
-    res.json({ tree });
-  } catch (err) {
-    res.status(500).json({ error: 'TREE_LOAD_FAILED', message: err.message });
-  }
-});
-
-// GET /api/projects/:id/breadcrumbs - Path to root
-router.get('/:id/breadcrumbs', authenticateToken, (req, res) => {
-  try {
-    const nodeId = parseInt(req.params.id, 10);
-    const breadcrumbs = memoryDb.getBreadcrumbs(nodeId);
-    res.json({ breadcrumbs });
-  } catch (err) {
-    res.status(500).json({ error: 'BREADCRUMBS_FAILED', message: err.message });
-  }
-});
-
-// GET /api/projects/:id - Details of a single node with direct children and tasks
-router.get('/:id', authenticateToken, (req, res) => {
-  try {
-    const nodeId = parseInt(req.params.id, 10);
+    const rawId = req.query.id || req.params.id;
+    const nodeId = Number.parseInt(rawId, 10);
     const node = memoryDb.nodes.find(n => n.id === nodeId);
 
     if (!node) {
@@ -92,7 +72,35 @@ router.get('/:id', authenticateToken, (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'NODE_FETCH_ERROR', message: err.message });
   }
+}
+
+// Helper to handle breadcrumbs query
+function handleGetBreadcrumbs(req, res) {
+  try {
+    const rawId = req.query.id || req.params.id;
+    const nodeId = Number.parseInt(rawId, 10);
+    const breadcrumbs = memoryDb.getBreadcrumbs(nodeId);
+    res.json({ breadcrumbs });
+  } catch (err) {
+    res.status(500).json({ error: 'BREADCRUMBS_FAILED', message: err.message });
+  }
+}
+
+// GET /api/projects/tree - Complete hierarchy tree
+router.get('/tree', authenticateToken, (req, res) => {
+  try {
+    const tree = memoryDb.getFullTree(null);
+    res.json({ tree });
+  } catch (err) {
+    res.status(500).json({ error: 'TREE_LOAD_FAILED', message: err.message });
+  }
 });
+
+// Support both query param (/detail?id=1) and route param (/:id)
+router.get('/detail', authenticateToken, handleGetNodeDetail);
+router.get('/breadcrumbs', authenticateToken, handleGetBreadcrumbs);
+router.get('/:id/breadcrumbs', authenticateToken, handleGetBreadcrumbs);
+router.get('/:id', authenticateToken, handleGetNodeDetail);
 
 // POST /api/projects - Create a new node/project/module
 router.post('/', authenticateToken, (req, res) => {
@@ -117,7 +125,7 @@ router.post('/', authenticateToken, (req, res) => {
       });
     }
 
-    const parentIdNum = parent_id ? parseInt(parent_id, 10) : null;
+    const parentIdNum = parent_id ? Number.parseInt(parent_id, 10) : null;
     if (parentIdNum) {
       const parentExists = memoryDb.nodes.find(n => n.id === parentIdNum);
       if (!parentExists) {
@@ -140,7 +148,7 @@ router.post('/', authenticateToken, (req, res) => {
       description: description || '',
       status: 'ACTIVE',
       priority: priority || 'NORMAL',
-      lead_id: lead_id ? parseInt(lead_id, 10) : req.user.id,
+      lead_id: lead_id ? Number.parseInt(lead_id, 10) : req.user.id,
       progress: 0,
       metadata: metadata || {},
       created_at: new Date().toISOString(),
@@ -169,10 +177,11 @@ router.post('/', authenticateToken, (req, res) => {
   }
 });
 
-// PUT /api/projects/:id - Update node
-router.put('/:id', authenticateToken, (req, res) => {
+// Helper for node update
+function handleUpdateNode(req, res) {
   try {
-    const nodeId = parseInt(req.params.id, 10);
+    const rawId = req.query.id || req.body.id || req.params.id;
+    const nodeId = Number.parseInt(rawId, 10);
     const nodeIndex = memoryDb.nodes.findIndex(n => n.id === nodeId);
 
     if (nodeIndex === -1) {
@@ -186,10 +195,10 @@ router.put('/:id', authenticateToken, (req, res) => {
     if (description !== undefined) node.description = description;
     if (status !== undefined) node.status = status;
     if (priority !== undefined) node.priority = priority;
-    if (progress !== undefined) node.progress = Math.min(100, Math.max(0, parseInt(progress, 10)));
-    if (lead_id !== undefined) node.lead_id = lead_id ? parseInt(lead_id, 10) : null;
+    if (progress !== undefined) node.progress = Math.min(100, Math.max(0, Number.parseInt(progress, 10)));
+    if (lead_id !== undefined) node.lead_id = lead_id ? Number.parseInt(lead_id, 10) : null;
     if (parent_id !== undefined && parent_id !== node.id) {
-      node.parent_id = parent_id ? parseInt(parent_id, 10) : null;
+      node.parent_id = parent_id ? Number.parseInt(parent_id, 10) : null;
     }
     node.updated_at = new Date().toISOString();
 
@@ -206,12 +215,16 @@ router.put('/:id', authenticateToken, (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'UPDATE_FAILED', message: err.message });
   }
-});
+}
 
-// DELETE /api/projects/:id - Remove node and subtrees
-router.delete('/:id', authenticateToken, requireAdmin, (req, res) => {
+router.put('/update', authenticateToken, handleUpdateNode);
+router.put('/:id', authenticateToken, handleUpdateNode);
+
+// Helper for node deletion
+function handleDeleteNode(req, res) {
   try {
-    const nodeId = parseInt(req.params.id, 10);
+    const rawId = req.query.id || req.params.id;
+    const nodeId = Number.parseInt(rawId, 10);
     const node = memoryDb.nodes.find(n => n.id === nodeId);
 
     if (!node) {
@@ -261,6 +274,9 @@ router.delete('/:id', authenticateToken, requireAdmin, (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'DELETE_FAILED', message: err.message });
   }
-});
+}
+
+router.delete('/remove', authenticateToken, requireAdmin, handleDeleteNode);
+router.delete('/:id', authenticateToken, requireAdmin, handleDeleteNode);
 
 export default router;
