@@ -141,7 +141,7 @@ export default function CliPrompt({
             <button
               type="button"
               key={qCmd}
-              onClick={() => handleExecute(qCmd)}
+              onClick={() => { void handleExecute(qCmd); }}
               className="px-2 py-0.5 rounded bg-term-panel hover:bg-term-green/20 text-term-green hover:text-term-green-bright border border-term-border text-[10px] transition-colors"
             >
               {qCmd}
@@ -225,7 +225,7 @@ export default function CliPrompt({
 
         <button
           type="button"
-          onClick={() => handleExecute()}
+          onClick={() => { void handleExecute(); }}
           disabled={!inputCmd.trim() || isExecuting}
           className="px-2.5 py-1 rounded bg-term-green hover:bg-term-green-bright disabled:opacity-30 text-term-bg font-bold flex items-center gap-1 transition-all"
         >

@@ -86,7 +86,7 @@ export default function LoginTerminal() {
           )}
 
           {/* Login Form CLI Formatted */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={(e) => { void handleSubmit(e); }} className="space-y-4">
             <div className="space-y-3 font-mono text-xs">
               <div>
                 <label htmlFor="cli-login-username" className="block text-term-muted mb-1 flex items-center gap-1.5">

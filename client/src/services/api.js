@@ -7,6 +7,28 @@ const api = axios.create({
   }
 });
 
+/**
+ * Security Helper: Sanitize route parameters to prevent
+ * Client-Side Request Forgery (CSRF/SSRF) and API Path Traversal.
+ * Whitelists only safe alphanumeric chars, underscores and hyphens.
+ */
+function sanitizeParam(param) {
+  if (typeof param === 'number') {
+    if (!Number.isFinite(param)) {
+      throw new TypeError('Invalid numeric parameter');
+    }
+    return String(param);
+  }
+  if (typeof param === 'string') {
+    const clean = param.trim().replace(/[^a-zA-Z0-9_-]/g, '');
+    if (!clean) {
+      throw new TypeError('Parameter contains invalid characters');
+    }
+    return encodeURIComponent(clean);
+  }
+  throw new TypeError('Parameter must be a number or string');
+}
+
 // Request interceptor: inject token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('nexus_cli_token');
@@ -22,7 +44,6 @@ api.interceptors.response.use(
   (error) => {
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
       if (window.location.pathname !== '/login') {
-        // Clear token on auth error
         localStorage.removeItem('nexus_cli_token');
         localStorage.removeItem('nexus_cli_user');
       }
@@ -52,11 +73,13 @@ export const projectService = {
     return res.data;
   },
   getNode: async (id) => {
-    const res = await api.get(`/projects/${id}`);
+    const safeId = sanitizeParam(id);
+    const res = await api.get(`/projects/${safeId}`);
     return res.data;
   },
   getBreadcrumbs: async (id) => {
-    const res = await api.get(`/projects/${id}/breadcrumbs`);
+    const safeId = sanitizeParam(id);
+    const res = await api.get(`/projects/${safeId}/breadcrumbs`);
     return res.data;
   },
   createNode: async (data) => {
@@ -64,11 +87,13 @@ export const projectService = {
     return res.data;
   },
   updateNode: async (id, data) => {
-    const res = await api.put(`/projects/${id}`, data);
+    const safeId = sanitizeParam(id);
+    const res = await api.put(`/projects/${safeId}`, data);
     return res.data;
   },
   deleteNode: async (id) => {
-    const res = await api.delete(`/projects/${id}`);
+    const safeId = sanitizeParam(id);
+    const res = await api.delete(`/projects/${safeId}`);
     return res.data;
   }
 };
@@ -83,11 +108,13 @@ export const taskService = {
     return res.data;
   },
   updateTask: async (id, data) => {
-    const res = await api.put(`/tasks/${id}`, data);
+    const safeId = sanitizeParam(id);
+    const res = await api.put(`/tasks/${safeId}`, data);
     return res.data;
   },
   deleteTask: async (id) => {
-    const res = await api.delete(`/tasks/${id}`);
+    const safeId = sanitizeParam(id);
+    const res = await api.delete(`/tasks/${safeId}`);
     return res.data;
   }
 };
@@ -109,7 +136,13 @@ export const adminService = {
 
 export const cliService = {
   exec: async (command, currentNodeId) => {
-    const res = await api.post('/cli/exec', { command, currentNodeId });
+    const safeNodeId = currentNodeId !== undefined && currentNodeId !== null
+      ? sanitizeParam(currentNodeId)
+      : 1;
+    const res = await api.post('/cli/exec', {
+      command: String(command || ''),
+      currentNodeId: Number(safeNodeId) || 1
+    });
     return res.data;
   }
 };

@@ -48,8 +48,8 @@ export default function App() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchTree();
-      fetchNode(selectedNodeId);
+      void fetchTree();
+      void fetchNode(selectedNodeId);
     }
   }, [isAuthenticated, selectedNodeId]);
 
@@ -79,16 +79,16 @@ export default function App() {
   }
 
   const handleSelectNode = (nodeId) => {
-    fetchNode(nodeId);
+    void fetchNode(nodeId);
     if (currentView !== 'tree') {
       setCurrentView('tree');
     }
   };
 
   const handleRefreshAll = () => {
-    fetchTree();
+    void fetchTree();
     if (selectedNodeId) {
-      fetchNode(selectedNodeId);
+      void fetchNode(selectedNodeId);
     }
   };
 

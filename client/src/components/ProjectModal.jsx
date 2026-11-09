@@ -28,7 +28,7 @@ export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSa
       }
     }
     if (isOpen) {
-      fetchUsers();
+      void fetchUsers();
     }
   }, [isOpen]);
 
@@ -120,7 +120,7 @@ export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSa
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
+        <form onSubmit={(e) => { void handleSubmit(e); }} className="p-4 sm:p-6 space-y-4">
           {error && (
             <div className="p-2.5 bg-term-red/10 border border-term-red/40 rounded text-term-red flex items-center gap-2 text-[11px]">
               <AlertCircle className="w-4 h-4 shrink-0" />

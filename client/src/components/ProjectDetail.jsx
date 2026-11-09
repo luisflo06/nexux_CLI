@@ -351,7 +351,7 @@ export default function ProjectDetail({
                   {task.status !== 'DONE' ? (
                     <button
                       type="button"
-                      onClick={() => handleQuickStatusChange(task, 'DONE')}
+                      onClick={() => { void handleQuickStatusChange(task, 'DONE'); }}
                       className="px-2 py-1 rounded bg-term-green/10 hover:bg-term-green/20 text-term-green-bright border border-term-green/30 text-[11px] font-bold transition-colors"
                       title="Marcar como COMPLETADA (DONE)"
                     >
@@ -360,7 +360,7 @@ export default function ProjectDetail({
                   ) : (
                     <button
                       type="button"
-                      onClick={() => handleQuickStatusChange(task, 'IN_PROGRESS')}
+                      onClick={() => { void handleQuickStatusChange(task, 'IN_PROGRESS'); }}
                       className="px-2 py-1 rounded bg-term-panel hover:bg-term-border text-term-muted text-[11px] transition-colors"
                       title="Reabrir tarea"
                     >
@@ -371,7 +371,7 @@ export default function ProjectDetail({
                   {task.status === 'TODO' && (
                     <button
                       type="button"
-                      onClick={() => handleQuickStatusChange(task, 'IN_PROGRESS')}
+                      onClick={() => { void handleQuickStatusChange(task, 'IN_PROGRESS'); }}
                       className="px-2 py-1 rounded bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 text-[11px] transition-colors"
                       title="Comenzar trabajo"
                     >
@@ -381,7 +381,7 @@ export default function ProjectDetail({
 
                   <button
                     type="button"
-                    onClick={() => handleDeleteTask(task.id, task.code)}
+                    onClick={() => { void handleDeleteTask(task.id, task.code); }}
                     className="p-1 text-term-muted hover:text-term-red hover:bg-term-red/10 rounded transition-colors"
                     title="Eliminar tarea"
                   >

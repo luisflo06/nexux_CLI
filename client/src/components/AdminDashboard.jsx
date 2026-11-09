@@ -57,8 +57,10 @@ export default function AdminDashboard({ onSelectNode, onOpenNewNodeModal, onOpe
   };
 
   useEffect(() => {
-    loadData();
-    const interval = setInterval(loadData, 10000); // 10s polling
+    void loadData();
+    const interval = setInterval(() => {
+      void loadData();
+    }, 10000); // 10s polling
     return () => clearInterval(interval);
   }, []);
 
@@ -160,7 +162,7 @@ export default function AdminDashboard({ onSelectNode, onOpenNewNodeModal, onOpe
           {user?.role === 'admin' && (
             <button
               type="button"
-              onClick={handleResetDemo}
+              onClick={() => { void handleResetDemo(); }}
               disabled={isResetting}
               className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-term-red/10 hover:bg-term-red/20 text-term-red border border-term-red/40 rounded font-mono transition-colors"
               title="Restaurar base de datos a datos iniciales de demo"
@@ -372,7 +374,7 @@ export default function AdminDashboard({ onSelectNode, onOpenNewNodeModal, onOpe
                       {node.id !== 1 && (
                         <button
                           type="button"
-                          onClick={() => handleDeleteNode(node)}
+                          onClick={() => { void handleDeleteNode(node); }}
                           className="p-1 hover:text-term-red hover:bg-term-red/10 rounded transition-colors"
                           title="Eliminar nodo y sub-ramas"
                         >

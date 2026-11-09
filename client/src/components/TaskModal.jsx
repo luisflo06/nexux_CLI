@@ -25,7 +25,7 @@ export default function TaskModal({ isOpen, onClose, nodeId, onSaved }) {
       }
     }
     if (isOpen) {
-      fetchUsers();
+      void fetchUsers();
       setFormData({
         title: '',
         description: '',
@@ -85,7 +85,7 @@ export default function TaskModal({ isOpen, onClose, nodeId, onSaved }) {
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4">
+        <form onSubmit={(e) => { void handleSubmit(e); }} className="p-4 sm:p-5 space-y-4">
           {error && (
             <div className="p-2.5 bg-term-red/10 border border-term-red/40 rounded text-term-red flex items-center gap-2 text-[11px]">
               <AlertCircle className="w-4 h-4 shrink-0" />

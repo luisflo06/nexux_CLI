@@ -58,7 +58,7 @@ export function AuthProvider({ children }) {
       }
       setLoading(false);
     }
-    verifyAuth();
+    void verifyAuth();
   }, [token]);
 
   const login = async (username, password) => {
