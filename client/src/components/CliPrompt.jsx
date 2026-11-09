@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Terminal, Send, Trash2, X, ChevronUp, ChevronDown, Sparkles } from 'lucide-react';
+import { Terminal, Send, Trash2, X } from 'lucide-react';
 import { cliService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -139,6 +139,7 @@ export default function CliPrompt({
         <div className="hidden md:flex items-center gap-1">
           {quickCommands.map((qCmd) => (
             <button
+              type="button"
               key={qCmd}
               onClick={() => handleExecute(qCmd)}
               className="px-2 py-0.5 rounded bg-term-panel hover:bg-term-green/20 text-term-green hover:text-term-green-bright border border-term-border text-[10px] transition-colors"
@@ -150,6 +151,7 @@ export default function CliPrompt({
 
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={() => setHistory([])}
             className="p-1 hover:text-term-amber transition-colors"
             title="Limpiar buffer (clear)"
@@ -157,6 +159,7 @@ export default function CliPrompt({
             <Trash2 className="w-3.5 h-3.5" />
           </button>
           <button
+            type="button"
             onClick={onToggle}
             className="p-1 hover:text-term-red transition-colors"
             title="Cerrar terminal"
@@ -221,6 +224,7 @@ export default function CliPrompt({
         />
 
         <button
+          type="button"
           onClick={() => handleExecute()}
           disabled={!inputCmd.trim() || isExecuting}
           className="px-2.5 py-1 rounded bg-term-green hover:bg-term-green-bright disabled:opacity-30 text-term-bg font-bold flex items-center gap-1 transition-all"

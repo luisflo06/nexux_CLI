@@ -1,7 +1,7 @@
 import express from 'express';
 import os from 'os';
 import { memoryDb, isRealPostgres, dbStatusMessage } from '../db/pool.js';
-import { initialNodes, initialTasks, initialAuditLogs, initialUsers } from '../db/seedData.js';
+import { initialNodes, initialTasks, initialAuditLogs } from '../db/seedData.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();

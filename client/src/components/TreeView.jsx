@@ -8,10 +8,7 @@ import {
   Milestone, 
   Plus, 
   Search, 
-  Zap, 
-  CheckCircle2,
-  Clock,
-  AlertTriangle
+  Zap
 } from 'lucide-react';
 
 export default function TreeView({ tree = [], selectedNodeId, onSelectNode, onOpenNewNodeModal }) {
@@ -75,7 +72,15 @@ export default function TreeView({ tree = [], selectedNodeId, onSelectNode, onOp
     return (
       <div key={node.id} className="select-none">
         <div
+          role="button"
+          tabIndex={0}
           onClick={() => onSelectNode(node.id)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onSelectNode(node.id);
+            }
+          }}
           style={{ paddingLeft: `${Math.max(8, depth * 16)}px` }}
           className={`group flex items-center justify-between py-1.5 pr-2.5 my-0.5 rounded cursor-pointer transition-all border ${
             isSelected

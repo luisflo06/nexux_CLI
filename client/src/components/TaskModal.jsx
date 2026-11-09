@@ -94,10 +94,11 @@ export default function TaskModal({ isOpen, onClose, nodeId, onSaved }) {
           )}
 
           <div>
-            <label className="block text-term-muted mb-1 font-bold">
+            <label htmlFor="task-title-input" className="block text-term-muted mb-1 font-bold">
               TITULO DE LA TAREA:
             </label>
             <input
+              id="task-title-input"
               type="text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -110,10 +111,11 @@ export default function TaskModal({ isOpen, onClose, nodeId, onSaved }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-term-muted mb-1 font-bold">
+              <label htmlFor="task-priority-select" className="block text-term-muted mb-1 font-bold">
                 PRIORIDAD:
               </label>
               <select
+                id="task-priority-select"
                 value={formData.priority}
                 onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                 className="w-full bg-term-bg border border-term-border rounded p-2 text-term-text focus:outline-none"
@@ -125,10 +127,11 @@ export default function TaskModal({ isOpen, onClose, nodeId, onSaved }) {
             </div>
 
             <div>
-              <label className="block text-term-muted mb-1 font-bold">
+              <label htmlFor="task-hours-input" className="block text-term-muted mb-1 font-bold">
                 HORAS ESTIMADAS:
               </label>
               <input
+                id="task-hours-input"
                 type="number"
                 step="0.5"
                 min="0.5"
@@ -140,10 +143,11 @@ export default function TaskModal({ isOpen, onClose, nodeId, onSaved }) {
           </div>
 
           <div>
-            <label className="block text-term-muted mb-1 font-bold">
+            <label htmlFor="task-assignee-select" className="block text-term-muted mb-1 font-bold">
               ASIGNAR A OPERADOR:
             </label>
             <select
+              id="task-assignee-select"
               value={formData.assigned_to}
               onChange={(e) => setFormData({ ...formData, assigned_to: e.target.value })}
               className="w-full bg-term-bg border border-term-border rounded p-2 text-term-text focus:outline-none"
@@ -158,10 +162,11 @@ export default function TaskModal({ isOpen, onClose, nodeId, onSaved }) {
           </div>
 
           <div>
-            <label className="block text-term-muted mb-1 font-bold">
+            <label htmlFor="task-tags-input" className="block text-term-muted mb-1 font-bold">
               ETIQUETAS (SEPARADAS POR COMA):
             </label>
             <input
+              id="task-tags-input"
               type="text"
               value={formData.tags}
               onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
@@ -171,10 +176,11 @@ export default function TaskModal({ isOpen, onClose, nodeId, onSaved }) {
           </div>
 
           <div>
-            <label className="block text-term-muted mb-1 font-bold">
+            <label htmlFor="task-desc-textarea" className="block text-term-muted mb-1 font-bold">
               DESCRIPCION DETALLADA:
             </label>
             <textarea
+              id="task-desc-textarea"
               rows={2}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}

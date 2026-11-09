@@ -1,5 +1,5 @@
 import express from 'express';
-import { memoryDb, isRealPostgres, query } from '../db/pool.js';
+import { memoryDb } from '../db/pool.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();

@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Activity, 
-  Cpu, 
   Database, 
-  Server, 
-  Layers, 
   Box, 
   CheckCircle2, 
-  AlertTriangle, 
   RotateCcw, 
   Download, 
   Search, 
-  ShieldAlert, 
   Trash2, 
   Edit, 
-  ArrowUpRight,
   ExternalLink,
   Plus
 } from 'lucide-react';
@@ -144,6 +138,7 @@ export default function AdminDashboard({ onSelectNode, onOpenNewNodeModal, onOpe
 
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={handleExportTopology}
             className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-term-panel hover:bg-term-border text-term-cyan border border-term-border rounded font-mono transition-colors"
             title="Exportar topologia de proyectos en JSON"
@@ -153,6 +148,7 @@ export default function AdminDashboard({ onSelectNode, onOpenNewNodeModal, onOpe
           </button>
 
           <button
+            type="button"
             onClick={() => onOpenNewNodeModal(null)}
             className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-term-green hover:bg-term-green-bright text-term-bg font-bold rounded shadow-md shadow-term-green/20 transition-all font-mono"
             title="Crear nuevo proyecto en el arbol"
@@ -163,6 +159,7 @@ export default function AdminDashboard({ onSelectNode, onOpenNewNodeModal, onOpe
 
           {user?.role === 'admin' && (
             <button
+              type="button"
               onClick={handleResetDemo}
               disabled={isResetting}
               className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-term-red/10 hover:bg-term-red/20 text-term-red border border-term-red/40 rounded font-mono transition-colors"
@@ -355,6 +352,7 @@ export default function AdminDashboard({ onSelectNode, onOpenNewNodeModal, onOpe
                   <td className="py-2 px-3 text-right">
                     <div className="flex items-center justify-end gap-1.5">
                       <button
+                        type="button"
                         onClick={() => onSelectNode(node.id)}
                         className="p-1 hover:text-term-green hover:bg-term-green/10 rounded transition-colors"
                         title="Ver en vista arbol / ramificada"
@@ -363,6 +361,7 @@ export default function AdminDashboard({ onSelectNode, onOpenNewNodeModal, onOpe
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => onOpenEditNodeModal(node)}
                         className="p-1 hover:text-term-cyan hover:bg-term-cyan/10 rounded transition-colors"
                         title="Editar parametros"
@@ -372,6 +371,7 @@ export default function AdminDashboard({ onSelectNode, onOpenNewNodeModal, onOpe
 
                       {node.id !== 1 && (
                         <button
+                          type="button"
                           onClick={() => handleDeleteNode(node)}
                           className="p-1 hover:text-term-red hover:bg-term-red/10 rounded transition-colors"
                           title="Eliminar nodo y sub-ramas"

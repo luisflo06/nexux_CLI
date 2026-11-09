@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Terminal, Shield, Activity, Database, LogOut, LayoutDashboard, GitBranch, Cpu } from 'lucide-react';
+import { Terminal, Activity, Database, LogOut, LayoutDashboard, GitBranch } from 'lucide-react';
 
 export default function TerminalHeader({ currentView, setCurrentView, isCliOpen, setIsCliOpen }) {
   const { user, logout } = useAuth();
@@ -34,6 +34,7 @@ export default function TerminalHeader({ currentView, setCurrentView, isCliOpen,
         {/* View Switchers */}
         <div className="flex items-center bg-term-panel border border-term-border rounded p-0.5 ml-2">
           <button
+            type="button"
             onClick={() => setCurrentView('tree')}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-colors ${
               currentView === 'tree'
@@ -46,6 +47,7 @@ export default function TerminalHeader({ currentView, setCurrentView, isCliOpen,
           </button>
 
           <button
+            type="button"
             onClick={() => setCurrentView('admin')}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-colors ${
               currentView === 'admin'
@@ -95,6 +97,7 @@ export default function TerminalHeader({ currentView, setCurrentView, isCliOpen,
 
         {/* Toggle CLI Panel Button */}
         <button
+          type="button"
           onClick={() => setIsCliOpen(!isCliOpen)}
           className={`flex items-center gap-1 px-2.5 py-1 rounded border text-xs font-bold transition-all ${
             isCliOpen
@@ -109,6 +112,7 @@ export default function TerminalHeader({ currentView, setCurrentView, isCliOpen,
 
         {/* Logout CLI Button */}
         <button
+          type="button"
           onClick={logout}
           className="flex items-center gap-1 px-2 py-1 text-term-muted hover:text-term-red hover:bg-term-red/10 border border-transparent hover:border-term-red/30 rounded transition-colors"
           title="Cerrar sesion (exit)"

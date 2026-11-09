@@ -12,7 +12,7 @@ import TaskModal from './components/TaskModal';
 import { projectService } from './services/api';
 
 export default function App() {
-  const { isAuthenticated, loading: authLoading, user } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [currentView, setCurrentView] = useState('tree'); // 'tree' | 'admin'
   const [tree, setTree] = useState([]);
   const [selectedNodeId, setSelectedNodeId] = useState(1);
@@ -160,7 +160,6 @@ export default function App() {
                 onOpenTaskModal={handleOpenTaskModal}
                 onOpenNodeModal={handleOpenNewNodeModal}
                 onOpenEditNodeModal={handleOpenEditNodeModal}
-                currentUser={user}
               />
             </div>
           </>

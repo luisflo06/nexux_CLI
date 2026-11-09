@@ -108,7 +108,7 @@ export const realPool = new Pool({
     client.release();
     isRealPostgres = true;
     dbStatusMessage = `POSTGRESQL_LIVE [${res.rows[0].now.toISOString()}]`;
-    console.log(`\x1b[32m[DB: OK] Connected to live PostgreSQL database at ${connectionString}\x1b[0m`);
+    console.log('\x1b[32m[DB: OK] Connected to live PostgreSQL database.\x1b[0m');
 
     // Run schema migrations
     const schemaPath = path.join(__dirname, 'schema.sql');

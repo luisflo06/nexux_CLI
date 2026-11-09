@@ -1,15 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Plus, 
-  Folder, 
   Box, 
   Layers, 
-  CheckCircle, 
   Clock, 
-  AlertCircle, 
   User, 
-  Calendar, 
-  Tag, 
   Trash2, 
   Edit3, 
   ArrowUpRight,
@@ -18,7 +13,7 @@ import {
   ShieldCheck,
   ChevronRight
 } from 'lucide-react';
-import { taskService, projectService } from '../services/api';
+import { taskService } from '../services/api';
 
 export default function ProjectDetail({ 
   nodeData, 
@@ -26,10 +21,8 @@ export default function ProjectDetail({
   onSelectNode, 
   onOpenTaskModal, 
   onOpenNodeModal, 
-  onOpenEditNodeModal,
-  currentUser 
+  onOpenEditNodeModal
 }) {
-  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   if (!nodeData || !nodeData.node) {
     return (
@@ -67,17 +60,7 @@ export default function ProjectDetail({
     }
   };
 
-  const handleUpdateNodeProgress = async (newProgress) => {
-    try {
-      setUpdatingStatus(true);
-      await projectService.updateNode(node.id, { progress: newProgress });
-      onRefresh();
-    } catch (err) {
-      alert(`Error actualizando progreso: ${err.message}`);
-    } finally {
-      setUpdatingStatus(false);
-    }
-  };
+
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -134,6 +117,7 @@ export default function ProjectDetail({
           {/* Action buttons */}
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={() => onOpenEditNodeModal(node)}
               className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 bg-term-panel hover:bg-term-border text-term-text border border-term-border rounded transition-colors"
               title="Editar parametros del nodo"
@@ -143,6 +127,7 @@ export default function ProjectDetail({
             </button>
 
             <button
+              type="button"
               onClick={() => onOpenNodeModal(node.id)}
               className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 bg-term-cyan/10 hover:bg-term-cyan/20 text-term-cyan border border-term-cyan/40 rounded transition-colors"
               title="Crear una sub-rama o proyecto hijo"
@@ -152,6 +137,7 @@ export default function ProjectDetail({
             </button>
 
             <button
+              type="button"
               onClick={() => onOpenTaskModal(node.id)}
               className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-term-green hover:bg-term-green-bright text-term-bg font-bold rounded shadow-md shadow-term-green/20 transition-all"
               title="Registrar nueva tarea"
@@ -230,7 +216,15 @@ export default function ProjectDetail({
             {children.map(child => (
               <div
                 key={child.id}
+                role="button"
+                tabIndex={0}
                 onClick={() => onSelectNode(child.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSelectNode(child.id);
+                  }
+                }}
                 className="bg-term-surface border border-term-border hover:border-term-cyan/50 rounded p-3 cursor-pointer transition-all hover:bg-term-panel/80 group space-y-2"
               >
                 <div className="flex items-start justify-between">
@@ -356,6 +350,7 @@ export default function ProjectDetail({
                 <div className="flex items-center gap-1.5 shrink-0">
                   {task.status !== 'DONE' ? (
                     <button
+                      type="button"
                       onClick={() => handleQuickStatusChange(task, 'DONE')}
                       className="px-2 py-1 rounded bg-term-green/10 hover:bg-term-green/20 text-term-green-bright border border-term-green/30 text-[11px] font-bold transition-colors"
                       title="Marcar como COMPLETADA (DONE)"
@@ -364,6 +359,7 @@ export default function ProjectDetail({
                     </button>
                   ) : (
                     <button
+                      type="button"
                       onClick={() => handleQuickStatusChange(task, 'IN_PROGRESS')}
                       className="px-2 py-1 rounded bg-term-panel hover:bg-term-border text-term-muted text-[11px] transition-colors"
                       title="Reabrir tarea"
@@ -374,6 +370,7 @@ export default function ProjectDetail({
 
                   {task.status === 'TODO' && (
                     <button
+                      type="button"
                       onClick={() => handleQuickStatusChange(task, 'IN_PROGRESS')}
                       className="px-2 py-1 rounded bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 text-[11px] transition-colors"
                       title="Comenzar trabajo"
@@ -383,6 +380,7 @@ export default function ProjectDetail({
                   )}
 
                   <button
+                    type="button"
                     onClick={() => handleDeleteTask(task.id, task.code)}
                     className="p-1 text-term-muted hover:text-term-red hover:bg-term-red/10 rounded transition-colors"
                     title="Eliminar tarea"

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AsciiBanner from './AsciiBanner';
-import { Terminal, Shield, Lock, ArrowRight, AlertCircle, Key, UserCheck } from 'lucide-react';
+import { Terminal, Lock, ArrowRight, AlertCircle, Key } from 'lucide-react';
 
 export default function LoginTerminal() {
   const { login } = useAuth();
@@ -89,11 +89,12 @@ export default function LoginTerminal() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-3 font-mono text-xs">
               <div>
-                <label className="block text-term-muted mb-1 flex items-center gap-1.5">
+                <label htmlFor="cli-login-username" className="block text-term-muted mb-1 flex items-center gap-1.5">
                   <span className="text-term-green-bright">$</span>
                   <span>nexus.system login:</span>
                 </label>
                 <input
+                  id="cli-login-username"
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -104,11 +105,12 @@ export default function LoginTerminal() {
               </div>
 
               <div>
-                <label className="block text-term-muted mb-1 flex items-center gap-1.5">
+                <label htmlFor="cli-login-password" className="block text-term-muted mb-1 flex items-center gap-1.5">
                   <span className="text-term-green-bright">$</span>
                   <span>password:</span>
                 </label>
                 <input
+                  id="cli-login-password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

@@ -1,7 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { memoryDb, isRealPostgres, realPool, query } from '../db/pool.js';
+import { memoryDb, isRealPostgres, query } from '../db/pool.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();

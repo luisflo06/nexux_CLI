@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Box, Plus, Save, AlertCircle } from 'lucide-react';
+import { X, Box, Save, AlertCircle } from 'lucide-react';
 import { projectService, authService } from '../services/api';
 
 export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSaved, allNodes = [] }) {
@@ -130,10 +130,11 @@ export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSa
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-term-muted mb-1 font-bold">
+              <label htmlFor="node-code-input" className="block text-term-muted mb-1 font-bold">
                 CODIGO UNICO (ID CLI):
               </label>
               <input
+                id="node-code-input"
                 type="text"
                 value={formData.code}
                 onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
@@ -145,10 +146,11 @@ export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSa
             </div>
 
             <div>
-              <label className="block text-term-muted mb-1 font-bold">
+              <label htmlFor="node-type-select" className="block text-term-muted mb-1 font-bold">
                 TIPO DE NODO:
               </label>
               <select
+                id="node-type-select"
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                 disabled={!!editNode}
@@ -163,10 +165,11 @@ export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSa
           </div>
 
           <div>
-            <label className="block text-term-muted mb-1 font-bold">
+            <label htmlFor="node-name-input" className="block text-term-muted mb-1 font-bold">
               NOMBRE DESCRIPTIVO:
             </label>
             <input
+              id="node-name-input"
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -177,10 +180,11 @@ export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSa
           </div>
 
           <div>
-            <label className="block text-term-muted mb-1 font-bold">
+            <label htmlFor="node-parent-select" className="block text-term-muted mb-1 font-bold">
               RAMA PADRE (HERENCIA EN ARBOL):
             </label>
             <select
+              id="node-parent-select"
               value={formData.parent_id}
               onChange={(e) => setFormData({ ...formData, parent_id: e.target.value })}
               className="w-full bg-term-bg border border-term-border rounded p-2 text-term-text focus:outline-none focus:border-term-green"
@@ -198,10 +202,11 @@ export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSa
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="block text-term-muted mb-1 font-bold">
+              <label htmlFor="node-status-select" className="block text-term-muted mb-1 font-bold">
                 ESTADO:
               </label>
               <select
+                id="node-status-select"
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 className="w-full bg-term-bg border border-term-border rounded p-2 text-term-text focus:outline-none"
@@ -214,10 +219,11 @@ export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSa
             </div>
 
             <div>
-              <label className="block text-term-muted mb-1 font-bold">
+              <label htmlFor="node-priority-select" className="block text-term-muted mb-1 font-bold">
                 PRIORIDAD:
               </label>
               <select
+                id="node-priority-select"
                 value={formData.priority}
                 onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                 className="w-full bg-term-bg border border-term-border rounded p-2 text-term-text focus:outline-none"
@@ -229,10 +235,11 @@ export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSa
             </div>
 
             <div>
-              <label className="block text-term-muted mb-1 font-bold">
+              <label htmlFor="node-lead-select" className="block text-term-muted mb-1 font-bold">
                 LIDER ASIGNADO:
               </label>
               <select
+                id="node-lead-select"
                 value={formData.lead_id}
                 onChange={(e) => setFormData({ ...formData, lead_id: e.target.value })}
                 className="w-full bg-term-bg border border-term-border rounded p-2 text-term-text focus:outline-none"
@@ -250,10 +257,11 @@ export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSa
           {editNode && (
             <div>
               <div className="flex justify-between text-term-muted mb-1 font-bold">
-                <span>PROGRESO (%):</span>
+                <label htmlFor="node-progress-range">PROGRESO (%):</label>
                 <span className="text-term-green-bright">{formData.progress}%</span>
               </div>
               <input
+                id="node-progress-range"
                 type="range"
                 min="0"
                 max="100"
@@ -265,10 +273,11 @@ export default function ProjectModal({ isOpen, onClose, parentId, editNode, onSa
           )}
 
           <div>
-            <label className="block text-term-muted mb-1 font-bold">
+            <label htmlFor="node-desc-textarea" className="block text-term-muted mb-1 font-bold">
               DESCRIPCION / OBJETIVOS:
             </label>
             <textarea
+              id="node-desc-textarea"
               rows={3}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}

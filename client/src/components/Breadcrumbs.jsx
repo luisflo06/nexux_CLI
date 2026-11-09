@@ -61,6 +61,7 @@ export default function Breadcrumbs({ breadcrumbs = [], onSelectNode }) {
           return (
             <React.Fragment key={crumb.id}>
               <button
+                type="button"
                 onClick={() => onSelectNode(crumb.id)}
                 className={`flex items-center gap-1.5 px-2 py-1 rounded border transition-all ${
                   isLast
@@ -94,6 +95,7 @@ export default function Breadcrumbs({ breadcrumbs = [], onSelectNode }) {
         <span className="text-term-muted">PATH:</span>
         <span className="text-term-cyan truncate max-w-[200px] md:max-w-xs">{fullPath}</span>
         <button
+          type="button"
           onClick={copyPath}
           className="text-term-muted hover:text-term-green transition-colors"
           title="Copiar ruta de migajas de pan al portapapeles"
